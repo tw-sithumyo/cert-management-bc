@@ -95,7 +95,7 @@ export class ExpressRoutes {
         try {
             const cert = await this._certsAgg.getCertificate(certId);
             res.status(200).send(cert);
-        } catch (error: any) {
+        } catch (error: unknown) {
             this._logger.error(`Error getting certificate: ${(error as Error).message}`);
             res.status(500).json({
                 status: "error",
@@ -118,7 +118,7 @@ export class ExpressRoutes {
         try {
             await this._certsAgg.storeCertificate(certId, cert);
             res.status(200).send();
-        } catch (error: any) {
+        } catch (error: unknown) {
             this._logger.error(`Error storing certificate: ${(error as Error).message}`);
             res.status(500).json({
                 status: "error",
@@ -147,7 +147,7 @@ export class ExpressRoutes {
 
             await this._certsAgg.storeCertificate(certId, cert);
             res.status(200).send();
-        } catch (error: any) {
+        } catch (error: unknown) {
             this._logger.error(`Error storing certificate: ${(error as Error).message}`);
             res.status(500).json({
                 status: "error",
@@ -170,7 +170,7 @@ export class ExpressRoutes {
         try {
             await this._certsAgg.updateCertificate(certId, cert);
             res.status(200).send();
-        } catch (error: any) {
+        } catch (error: unknown) {
             this._logger.error(`Error updating certificate: ${(error as Error).message}`);
             res.status(500).json({
                 status: "error",
@@ -199,7 +199,7 @@ export class ExpressRoutes {
 
             await this._certsAgg.updateCertificate(certId, cert);
             res.status(200).send();
-        } catch (error: any) {
+        } catch (error: unknown) {
             this._logger.error(`Error updating certificate: ${(error as Error).message}`);
             res.status(500).json({
                 status: "error",

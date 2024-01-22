@@ -61,7 +61,7 @@ export class CertificateAggregate {
         try {
             await fs.promises.mkdir(CERTS_DIR, { recursive: true });
             this._messageProducer.connect();
-        } catch (error: any) {
+        } catch (error: unknown) {
             const errMsg = `CERTS_DIR '${CERTS_DIR}; create error: ${(error as Error).message}`;
             this._logger.error(errMsg);
             throw new CertDirCreateError(errMsg);
@@ -87,7 +87,7 @@ export class CertificateAggregate {
             const filePath = path.join(CERTS_DIR, `${certId}.pem`);
             const cert = await fs.promises.readFile(filePath, "utf8");
             return cert;
-        } catch (error: any) {
+        } catch (error: unknown) {
             const errMsg = `Error Certificate Not Found: '${certId}'`;
             this._logger.error(errMsg);
             throw new CertReadingError(errMsg);
@@ -110,7 +110,7 @@ export class CertificateAggregate {
 
         try {
             await fs.promises.writeFile(filePath, cert);
-        } catch (error: any) {
+        } catch (error: unknown) {
             const errMsg = `Error Storing certificate: ${(error as Error).message}`;
             this._logger.error(errMsg);
             throw new CertStoringError("Error Storing Certificate");
@@ -136,7 +136,7 @@ export class CertificateAggregate {
 
         try {
             await fs.promises.writeFile(filePath, cert);
-        } catch (error: any) {
+        } catch (error: unknown) {
             const errMsg = `Error Updating certificate: ${(error as Error).message}`;
             this._logger.error(errMsg);
             throw new CertStoringError("Error Updating Certificate");

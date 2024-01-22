@@ -43,13 +43,13 @@ export class CertificatesHttpClient {
     private readonly _authRequester: IAuthenticatedHttpRequester;
 
     constructor(
-        // logger: ILogger,
-        baseUrlHttpService: string
-        // authRequester: IAuthenticatedHttpRequester,
+        logger: ILogger,
+        baseUrlHttpService: string,
+        authRequester: IAuthenticatedHttpRequester,
     ) {
-        // this._logger = logger.createChild(this.constructor.name);
+        this._logger = logger.createChild(this.constructor.name);
         this._baseUrlHttpService = baseUrlHttpService;
-        // this._authRequester = authRequester;
+        this._authRequester = authRequester;
     }
 
     public async getCertificate(certId: string): Promise<string | null> {
@@ -58,8 +58,7 @@ export class CertificatesHttpClient {
                 `/certs/${certId}`,
                 this._baseUrlHttpService
             ).toString();
-            // const resp = await this._authRequester.fetch(url);
-            const resp = await fetch(url);
+            const resp = await this._authRequester.fetch(url);
 
             const respText = await resp.text();
 
@@ -74,7 +73,6 @@ export class CertificatesHttpClient {
             throw new UnableToGetCertificateError();
         } catch (e: unknown) {
             if (e instanceof Error) throw e;
-            // handle everything else
             throw new UnableToGetCertificateError();
         }
     }
@@ -85,13 +83,12 @@ export class CertificatesHttpClient {
             const request = new Request(url, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json", // Ensure to set the Content-Type header
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ certId, cert }),
             });
 
-            const resp = await fetch(request);
-            // const resp = await this._authRequester.fetch(request);
+            const resp = await this._authRequester.fetch(request);
 
             const respBody = await resp.text();
 
@@ -103,7 +100,6 @@ export class CertificatesHttpClient {
             throw new UnableToCreateCertificateError(`Response status: ${resp.status}, Body: ${respBody}`);
         } catch (e: unknown) {
             if (e instanceof Error) throw e;
-            // handle everything else
             throw new UnableToCreateCertificateError();
         }
     }
@@ -125,8 +121,7 @@ export class CertificatesHttpClient {
                 body: JSON.stringify({ certId, cert }),
             });
 
-            // const resp = await this._authRequester.fetch(request);
-            const resp = await fetch(request);
+            const resp = await this._authRequester.fetch(request);
 
             if (resp.status === 200) {
                 return;
@@ -135,7 +130,6 @@ export class CertificatesHttpClient {
             throw new UnableToUpdateCertificateError();
         } catch (e: unknown) {
             if (e instanceof Error) throw e;
-            // handle everything else
             throw new UnableToUpdateCertificateError();
         }
     }
