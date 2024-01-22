@@ -1,22 +1,24 @@
 {
-    "name": "@mojaloop/typescript-bc-template",
+    "name": "@mojaloop/cert-management-bc",
     "version": "0.0.1",
-    "description": "mojaloop typescript bounded context template and examples.",
+    "description": "To manage the certs of DFSPs for fspiop-signature and connection management",
     "license": "Apache-2.0",
-    "homepage": "https://github.com/mojaloop/typescript-bc-template",
+    "homepage": "https://github.com/mojaloop/cert-management-bc",
     "private": true,
     "bugs": {
-        "url": "https://github.com/mojaloop/typescript-bc-template/issues#readme"
+        "url": "https://github.com/mojaloop/cert-management-bc/issues#readme"
     },
     "contributors": [
         "Miguel de Barros <miguel.debarros@modusbox.com>",
-        "Pedro Sousa Barreto <pedrosousabarreto@gmail.com>"
+        "Pedro Sousa Barreto <pedrosousabarreto@gmail.com>",
+        "Si Thu Myo <sithu.myo@thitsaworks.com>"
     ],
     "scripts": {
         "prepare": "husky install",
         "pre_commit_check": "npm run build && npm run lint && npm run test:unit",
         "start": "npm -ws run start",
-        "start:example-svc": "npm -w packages/example-svc run start",
+        "start:dev": "npm -ws run start:dev",
+        "start:mcm-svc": "npm -w packages/mcm-svc run start",
         "build": "npm -ws run build",
         "watch": "npm -ws run watch",
         "clean": "npm run clean:dist; npm run clean:npm",
@@ -53,5 +55,9 @@
     ],
     "engines": {
         "node": ">=20.10.0"
+    },
+    "dependencies": {
+    "@types/multer": "^1.4.11",
+        "multer": "^1.4.5-lts.1"
     }
 }

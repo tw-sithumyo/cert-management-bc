@@ -19,35 +19,31 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
 
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
-
- * Crosslake
- - Pedro Sousa Barreto <pedrob@crosslaketech.com>
+ * ThitsaWorks
+ - Si Thu Myo <sithu.myo@thitsaworks.com>
 
  --------------
  ******/
 
 "use strict";
 
-/*
- NOTE:  Use the ExampleTypes notation below when possible instead of enums
-        Typescript enums generate js code that is not just types, which
-        is what "declare type" does.
+import { ConfigurationClient,IConfigProvider } from "@mojaloop/platform-configuration-bc-client-lib";
 
-        By using only types and interfaces, we can register this dependency
-        as a pure types lib and "put" it in the devDependencies section of
-        the consuming package.json
- */
+// configs - constants / code dependent
+const CONFIGSET_VERSION = "0.3.8";
 
-export declare type ExampleTypes = "TYPE_A" | "TYPE_B";
+export function GetMcmConfigs(
+    configProvider: IConfigProvider,
+    bcName:string,
+    appName:string,
+    appVersion:string
+): ConfigurationClient {
+    const configClient = new ConfigurationClient(
+        bcName, appName, appVersion, CONFIGSET_VERSION, configProvider
+    );
 
-export declare type Example = {
-    name: string;
-    type: ExampleTypes;
-}
-
-export declare interface IExampleInterface {
-    name: string;
-    type: ExampleTypes;
+    /*
+    * Add application parameters here
+    * */
+    return configClient;
 }
