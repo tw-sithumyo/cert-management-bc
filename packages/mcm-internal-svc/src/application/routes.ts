@@ -30,7 +30,8 @@
 import express from "express";
 import { ILogger } from "@mojaloop/logging-bc-public-types-lib";
 import { IConfigurationClient } from "@mojaloop/platform-configuration-bc-public-types-lib";
-import { CertificateAggregate } from "../domain/certificate_agg";
+import { CertificateAggregate } from "@mojaloop/cert-management-bc-domain-lib";
+
 import multer from "multer";
 
 export class ExpressRoutes {

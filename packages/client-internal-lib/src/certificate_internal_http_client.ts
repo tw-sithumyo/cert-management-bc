@@ -33,9 +33,10 @@ import {
     UnableToCreateCertificateError,
     UnableToGetCertificateError,
     UnableToUpdateCertificateError,
+    UnableToDeleteCertificateError,
 } from "./errors";
 
-export class CertificatesHttpClient {
+export class CertificatesInternalHttpClient {
     // Properties received through the constructor.
     private readonly _logger: ILogger;
     // Other properties.
@@ -155,7 +156,7 @@ export class CertificatesHttpClient {
             return resp.status;
         } catch (e: unknown) {
             if (e instanceof Error) throw e;
-            throw new UnableToUpdateCertificateError();
+            throw new UnableToDeleteCertificateError();
         }
     }
 }

@@ -1,4 +1,7 @@
-# MCM (Mojaloop Certificate Management) SVC
+# Internal MCM (Mojaloop Certificate Management) SVC
+This internal API service is responsible for managing the public certificates.
+
+Default port: 3200
 
 ## Build
 

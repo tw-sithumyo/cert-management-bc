@@ -31,7 +31,7 @@
 "use strict";
 
 import { ILogger, LogLevel } from "@mojaloop/logging-bc-public-types-lib";
-import { CertificatesHttpClient } from "../../packages/client-lib/src";
+import { CertificatesInternalHttpClient } from "../../packages/client-internal-lib/src";
 import { AuthenticatedHttpRequester } from "@mojaloop/security-bc-client-lib";
 import { ConsoleLogger } from "@mojaloop/logging-bc-public-types-lib";
 
@@ -52,7 +52,7 @@ const BASE_URL_PARTICIPANTS_HTTP_SERVICE: string = `http://localhost:3200`;
 /* ********** Constants End ********** */
 
 let logger: ILogger;
-let certificatesHttpClient: CertificatesHttpClient;
+let certificatesInternalHttpClient: CertificatesInternalHttpClient;
 let authenticatedHttpRequester: AuthenticatedHttpRequester;
 
 const AUTH_N_SVC_BASEURL =
@@ -81,7 +81,7 @@ describe("certificates management - integration tests", () => {
             PASSWORD
         );
 
-        certificatesHttpClient = new CertificatesHttpClient(
+        certificatesInternalHttpClient = new CertificatesInternalHttpClient(
             logger,
             BASE_URL_PARTICIPANTS_HTTP_SERVICE,
             authenticatedHttpRequester
@@ -93,54 +93,54 @@ describe("certificates management - integration tests", () => {
     });
 
     test("list certificates", async () => {
-        const certs = await certificatesHttpClient.getListCertificates();
+        const certs = await certificatesInternalHttpClient.getListCertificates();
         expect(certs).toBeInstanceOf(Array);
     });
 
     test("create certificate using string", async () => {
         const certId = "test_cert_1";
         const cert_string = "---- BEGIN CERTIFICATE ----\n"+ "testing testing" +"----- END CERTIFICATE -----";
-        const status = await certificatesHttpClient.postCertificate(certId, cert_string);
+        const status = await certificatesInternalHttpClient.postCertificate(certId, cert_string);
 
         expect(status).toBeDefined();
         expect(status).toBe(200);
 
         // cleanup
-        await certificatesHttpClient.deleteCertificate(certId);
+        await certificatesInternalHttpClient.deleteCertificate(certId);
     })
 
     test("get certificate", async () => {
         const certId = "test_cert_2";
         const cert_string = "---- BEGIN CERTIFICATE ----\n"+ "testing testing" +"----- END CERTIFICATE -----";
-        const status = await certificatesHttpClient.postCertificate(certId, cert_string);
+        const status = await certificatesInternalHttpClient.postCertificate(certId, cert_string);
 
         expect(status).toBeDefined();
         expect(status).toBe(200);
 
-        const cert = await certificatesHttpClient.getCertificate(certId);
+        const cert = await certificatesInternalHttpClient.getCertificate(certId);
         expect(cert).toBeDefined();
         expect(cert).toBe(cert_string);
 
         // cleanup
-        await certificatesHttpClient.deleteCertificate(certId);
+        await certificatesInternalHttpClient.deleteCertificate(certId);
     })
 
     test("delete certificate", async () => {
         const certId = "test_cert_3";
         const cert_string = "---- BEGIN CERTIFICATE ----\n"+ "testing testing" +"----- END CERTIFICATE -----";
-        const status = await certificatesHttpClient.postCertificate(certId, cert_string);
+        const status = await certificatesInternalHttpClient.postCertificate(certId, cert_string);
 
         expect(status).toBeDefined();
         expect(status).toBe(200);
 
-        const delete_status = await certificatesHttpClient.deleteCertificate(certId);
+        const delete_status = await certificatesInternalHttpClient.deleteCertificate(certId);
         expect(delete_status).toBeDefined();
         expect(delete_status).toBe(200);
     })
 
     test("get certificate - not found", async () => {
         const certId = "test_cert_999";
-        const cert = await certificatesHttpClient.getCertificate(certId);
+        const cert = await certificatesInternalHttpClient.getCertificate(certId);
         expect(cert).toBeNull();
     })
 });

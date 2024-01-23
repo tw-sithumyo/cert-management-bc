@@ -41,15 +41,15 @@ import {IMessageProducer} from "@mojaloop/platform-shared-lib-messaging-types-li
 import {MLKafkaJsonProducer} from "@mojaloop/platform-shared-lib-nodejs-kafka-client-lib";
 import * as util from "util";
 import {Server} from "net";
-import {CertificateAggregate} from "../domain/certificate_agg";
+import {CertificateAggregate} from "@mojaloop/cert-management-bc-domain-lib";
 
-const APP_NAME = "mcm-svc";
+const APP_NAME = "mcm-external-svc";
 const BC_NAME = "cert-management-bc";
 const APP_VERSION = packageJSON.version;
 const PRODUCTION_MODE = process.env["PRODUCTION_MODE"] || false;
 const LOG_LEVEL: LogLevel = process.env["LOG_LEVEL"] as LogLevel || LogLevel.DEBUG;
 
-const SVC_DEFAULT_HTTP_PORT = 3200;
+const SVC_DEFAULT_HTTP_PORT = 3220;
 
 const KAFKA_URL = process.env["KAFKA_URL"] || "localhost:9092";
 const KAFKA_LOGS_TOPIC = process.env["KAFKA_LOGS_TOPIC"] || "logs";

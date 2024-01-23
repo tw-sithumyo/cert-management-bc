@@ -44,7 +44,10 @@
       "*": [
         "src/*",
         "node_modules/*"
-      ]
+      ],
+      "@mojaloop/cert-management-bc-domain-lib": [
+        "packages/domain-lib/dist"
+      ],
     },
     "esModuleInterop": true
   }

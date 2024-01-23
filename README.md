@@ -13,11 +13,6 @@ TBD finish this
 
 ### Certificate Management Service - mcm-svc
 
-This service exemplifies how to create a bounded context service that can be deployed.
-The objective is to show how to use the most important vNext platform foundational services.
-
-To make sure the service is docker image is build and published to DockerHub by the CI/CD pipeline, change the value of the "
-publish_to_dockerhub" to true.
 
 ## Usage
 
@@ -47,10 +42,16 @@ npm install
 npm run build
 ```
 
-### Run
+### Run The MCM Internal Service
 
 ```bash
-npm run start
+npm run start:mcm-internal-svc
+```
+
+### Run The MCM External Service
+
+```bash
+npm run start:mcm-external-svc
 ```
 
 ### Unit Tests

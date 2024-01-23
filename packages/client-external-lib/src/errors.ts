@@ -26,5 +26,8 @@
  ******/
 
 "use strict";
-export * from "./certificate_http_client";
+export class UnauthorizedError extends Error{}
+export class ConnectionRefusedError extends Error{}
+
+export class UnableToGetCertificateError extends Error{}
 
