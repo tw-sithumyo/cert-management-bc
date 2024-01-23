@@ -4,7 +4,7 @@
     "description": "Internal Client Library for Cert Management BC",
     "license": "Apache-2.0",
     "homepage": "https://github.com/mojaloop/cert-management-bc",
-    "private": true,
+    "private": false,
     "bugs": {
         "url": "https://github.com/mojaloop/cert-management-bc#readme"
     },

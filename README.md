@@ -2,13 +2,6 @@
 
 **EXPERIMENTAL** vNext Mojaloop Certificate Management Service
 
-**Notes:**
-- Replace `package-dir-name` with the correct module name, it corresponds to the directory name
-- Replace `npm_dependency_name` with the correct dependency name
-- Common devDependencies, such as linters or test frameworks, should be installed/dependend in the main `package.json` to avoid repeating them in each of the monorepo's modules
-
-TBD finish this
-
 ## Packages
 
 ### Certificate Management Service - mcm-svc
@@ -65,9 +58,6 @@ npm run test:unit
 ```bash
 npm run test:integration
 ```
-
-### Execute locally the pre-commit checks - these will be executed with every commit and in the default CI/CD pipeline
-Make sure these pass before committing any code
 
 ```bash
 npm run pre_commit_check
