@@ -27,6 +27,8 @@
 "use strict";
 
 export class CertNotFoundError extends Error {}
+export class CertAlreadyExistError extends Error {}
+export class CertFilenameValidationError extends Error {}
 export class CertStoringError extends Error {}
 export class CertReadingError extends Error {}
 export class CertIDInvalidError extends Error {}

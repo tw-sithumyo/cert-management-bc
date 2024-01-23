@@ -34,8 +34,10 @@ import { IMessageProducer } from "@mojaloop/platform-shared-lib-messaging-types-
 import path from "path";
 import fs from "fs";
 import {
+    CertAlreadyExistError,
     CertDirCreateError,
     CertIDInvalidError,
+    CertNotFoundError,
     CertReadingError,
     CertStoringError,
 } from "./errors";
@@ -73,8 +75,23 @@ export class CertificateAggregate {
         if (!certId) {
             return false;
         }
-        // Example validation: ensure certId is
-        return /^[a-zA-Z0-9-_]{3,30}$/.test(certId);
+        return /^[a-zA-Z0-9_]{3,30}$/.test(certId);
+    }
+
+    public async listCertificates(): Promise<string[]> {
+        try {
+            const files = await fs.promises.readdir(CERTS_DIR);
+            const certs = files.map((file) => {
+                const certId = file.split("-pub.")[0];
+                return certId;
+            });
+            return certs;
+
+        } catch (error: unknown) {
+            const errMsg = `Error Listing Certificates: ${(error as Error).message}`;
+            this._logger.error(errMsg);
+            throw new CertReadingError(errMsg);
+        }
     }
 
     public async getCertificate(certId: string): Promise<string> {
@@ -84,7 +101,7 @@ export class CertificateAggregate {
             throw new CertIDInvalidError(errMsg);
         }
         try {
-            const filePath = path.join(CERTS_DIR, `${certId}.pem`);
+            const filePath = path.join(CERTS_DIR, `${certId}-pub.pem`);
             const cert = await fs.promises.readFile(filePath, "utf8");
             return cert;
         } catch (error: unknown) {
@@ -101,11 +118,11 @@ export class CertificateAggregate {
             throw new CertIDInvalidError(errMsg);
         }
 
-        const filePath = path.join(CERTS_DIR, `${certId}.pem`);
+        const filePath = path.join(CERTS_DIR, `${certId}-pub.pem`);
         if (fs.existsSync(filePath)) {
             const errMsg = "Certificate already exists";
             this._logger.error(errMsg);
-            throw new Error(errMsg);
+            throw new CertAlreadyExistError(errMsg);
         }
 
         try {
@@ -127,11 +144,11 @@ export class CertificateAggregate {
             throw new CertIDInvalidError(errMsg);
         }
 
-        const filePath = path.join(CERTS_DIR, `${certId}.pem`);
+        const filePath = path.join(CERTS_DIR, `${certId}-pub.pem`);
         if (!fs.existsSync(filePath)) {
             const errMsg = "Certificate does not exist";
             this._logger.error(errMsg);
-            throw new Error(errMsg);
+            throw new CertNotFoundError(errMsg);
         }
 
         try {
@@ -140,6 +157,29 @@ export class CertificateAggregate {
             const errMsg = `Error Updating certificate: ${(error as Error).message}`;
             this._logger.error(errMsg);
             throw new CertStoringError("Error Updating Certificate");
+        }
+    }
+
+    public async deleteCertificate(certId: string): Promise<void> {
+        if (!this._validateCertId(certId)) {
+            const errMsg = `Invalid certificate ID: ${certId}`;
+            this._logger.error(errMsg);
+            throw new CertIDInvalidError(errMsg);
+        }
+
+        const filePath = path.join(CERTS_DIR, `${certId}-pub.pem`);
+        if (!fs.existsSync(filePath)) {
+            const errMsg = "Certificate does not exist";
+            this._logger.error(errMsg);
+            throw new CertNotFoundError(errMsg);
+        }
+
+        try {
+            await fs.promises.unlink(filePath);
+        } catch (error: unknown) {
+            const errMsg = `Error Deleting certificate: ${(error as Error).message}`;
+            this._logger.error(errMsg);
+            throw new CertStoringError("Error Deleting Certificate");
         }
     }
 }

@@ -52,6 +52,24 @@ export class CertificatesHttpClient {
         this._authRequester = authRequester;
     }
 
+    public async getListCertificates(): Promise<string[]> {
+        try {
+            const url = new URL("/certs", this._baseUrlHttpService).toString();
+            const resp = await this._authRequester.fetch(url);
+
+            const respText = await resp.text();
+
+            if (resp.status === 200) {
+                return JSON.parse(respText);
+            }
+
+            throw new UnableToGetCertificateError();
+        } catch (e: unknown) {
+            if (e instanceof Error) throw e;
+            throw new UnableToGetCertificateError();
+        }
+    }
+
     public async getCertificate(certId: string): Promise<string | null> {
         try {
             const url = new URL(
@@ -119,6 +137,29 @@ export class CertificatesHttpClient {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ certId, cert }),
+            });
+
+            const resp = await this._authRequester.fetch(request);
+
+            if (resp.status === 200) {
+                return;
+            }
+
+            throw new UnableToUpdateCertificateError();
+        } catch (e: unknown) {
+            if (e instanceof Error) throw e;
+            throw new UnableToUpdateCertificateError();
+        }
+    }
+
+    public async deleteCertificate(certId: string): Promise<void> {
+        try {
+            const url = new URL(
+                `/certs/${certId}`,
+                this._baseUrlHttpService
+            ).toString();
+            const request = new Request(url, {
+                method: "DELETE",
             });
 
             const resp = await this._authRequester.fetch(request);

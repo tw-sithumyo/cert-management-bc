@@ -53,6 +53,11 @@ export class ExpressRoutes {
         const uploadfile = multer({ storage: storage });
 
         this._mainRouter.get(
+            "/certs",
+            this._certsListCertificates.bind(this)
+        );
+
+        this._mainRouter.get(
             "/certs/:certId",
             this._certsGetCertificate.bind(this)
         );
@@ -79,10 +84,49 @@ export class ExpressRoutes {
             this._certsUpdateFileCertificate.bind(this)
         );
 
+        this._mainRouter.delete(
+            "/certs/:certId",
+            this._certsDeleteCertificate.bind(this)
+        );
+
     }
 
     get MainRouter(): express.Router {
         return this._mainRouter;
+    }
+
+    private _validateCertFile(cert_id: string, cert_file: Express.Multer.File): boolean {
+        // filename should be cert_id-pub.pem
+        const filename = cert_file.originalname;
+        const filename_parts = filename.split(".");
+        if (filename_parts.length != 2) {
+            return false;
+        }
+        if (filename_parts[0] != cert_id + "-pub") {
+            return false;
+        }
+        if (filename_parts[1] != "pem") {
+            return false;
+        }
+        return true;
+    }
+
+    private async _certsListCertificates(
+        req: express.Request,
+        res: express.Response,
+    ): Promise<void> {
+        this._logger.debug("Received request to List Certificates");
+
+        try {
+            const certs = await this._certsAgg.listCertificates();
+            res.status(200).send(certs);
+        } catch (error: unknown) {
+            this._logger.error(`Error listing certificates: ${(error as Error).message}`);
+            res.status(500).json({
+                status: "error",
+                msg: (error as Error).message
+            });
+        }
     }
 
     private async _certsGetCertificate(
@@ -140,6 +184,11 @@ export class ExpressRoutes {
         try {
             if (!req.file) {
                 res.status(400).json({ error: "No file uploaded" });
+                return;
+            }
+
+            if(this._validateCertFile(certId, req.file) == false) {
+                res.status(400).json({ error: `Invalid file uploaded. use '${certId}-pub.pem' as filename. ` });
                 return;
             }
 
@@ -201,6 +250,25 @@ export class ExpressRoutes {
             res.status(200).send();
         } catch (error: unknown) {
             this._logger.error(`Error updating certificate: ${(error as Error).message}`);
+            res.status(500).json({
+                status: "error",
+                msg: (error as Error).message
+            });
+        }
+    }
+
+    private async _certsDeleteCertificate(
+        req: express.Request,
+        res: express.Response
+    ): Promise<void> {
+        this._logger.debug("Received request to Delete Certificate");
+        const certId = req.params.certId;
+
+        try {
+            await this._certsAgg.deleteCertificate(certId);
+            res.status(200).send();
+        } catch (error: unknown) {
+            this._logger.error(`Error deleting certificate: ${(error as Error).message}`);
             res.status(500).json({
                 status: "error",
                 msg: (error as Error).message
