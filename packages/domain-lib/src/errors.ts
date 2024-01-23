@@ -19,35 +19,18 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
 
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
-
- * Crosslake
- - Pedro Sousa Barreto <pedrob@crosslaketech.com>
-
+ * ThitsaWorks
+ - Si Thu Myo <sithu.myo@thitsaworks.com>
  --------------
  ******/
 
 "use strict";
 
-/*
- NOTE:  Use the ExampleTypes notation below when possible instead of enums
-        Typescript enums generate js code that is not just types, which
-        is what "declare type" does.
+export class CertNotFoundError extends Error {}
+export class CertAlreadyExistError extends Error {}
+export class CertFilenameValidationError extends Error {}
+export class CertStoringError extends Error {}
+export class CertReadingError extends Error {}
+export class CertIDInvalidError extends Error {}
 
-        By using only types and interfaces, we can register this dependency
-        as a pure types lib and "put" it in the devDependencies section of
-        the consuming package.json
- */
-
-export declare type ExampleTypes = "TYPE_A" | "TYPE_B";
-
-export declare type Example = {
-    name: string;
-    type: ExampleTypes;
-}
-
-export declare interface IExampleInterface {
-    name: string;
-    type: ExampleTypes;
-}
+export class CertDirCreateError extends Error {}

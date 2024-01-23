@@ -1,59 +1,10 @@
-# typescript-bc-template
+# mcm-svc
 
-**EXPERIMENTAL** vNext Typescript Bounded Context Mono Repository Template
-
-This repository has two main purposes
-- As a template for bounded context mono repos
-- As example code for the implementation of applications. It shows how to use common cross-cutting concerns' clients, like logging, auditing, platform-config and security.
-
-# How to use this template
-
-- Start by creating a new repository in GitHub using this template
-
-![create repo from template](./readme-imgs/create_repo_with_template.png "Create repository using this template")
-
-- Make sure package directory names conform to the standard and end with "lib", "svc" or "tool"()
-
-Unsorted hints:
-- For packages that don't require publishing to NPM, make sure you have the `"private": true` line in package.json. By contrast, for all modules that require NPM publishing make sure it is set to false.
--
-
-## How to add dependencies with npm packages
-
-```shell
-npm -w packages/package-dir-name install npm_dependency_name
-```
-For development dependencies add the `--dev` at the end, like so:
-```shell
-npm -w packages/package-dir-name install npm_dependency_name --save-dev
-```
-
-**Notes:**
-- Replace `package-dir-name` with the correct module name, it corresponds to the directory name
-- Replace `npm_dependency_name` with the correct dependency name
-- Common devDependencies, such as linters or test frameworks, should be installed/dependend in the main `package.json` to avoid repeating them in each of the monorepo's modules
-
-TBD finish this
+**EXPERIMENTAL** vNext Mojaloop Certificate Management Service
 
 ## Packages
 
-### Example Service - example-svc
-
-This service exemplifies how to create a bounded context service that can be deployed.
-The objective is to show how to use the most important vNext platform foundational services.
-
-To make sure the service is docker image is build and published to DockerHub by the CI/CD pipeline, change the value of the "
-publish_to_dockerhub" to true.
-
-```json
-"private": true,
-"mojaloop": {
-  "publish_to_dockerhub": true
-},
-```
-
-Please see the details of the example service within its [README](./modules/example-svc/README.md) file.
-
+### Certificate Management Service - mcm-svc
 
 
 ## Usage
@@ -84,10 +35,16 @@ npm install
 npm run build
 ```
 
-### Run
+### Run The MCM Internal Service
 
 ```bash
-npm run start
+npm run start:mcm-internal-svc
+```
+
+### Run The MCM External Service
+
+```bash
+npm run start:mcm-external-svc
 ```
 
 ### Unit Tests

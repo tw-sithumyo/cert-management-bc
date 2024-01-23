@@ -1,0 +1,187 @@
+
+/*****
+ License
+ --------------
+ Copyright © 2017 Bill & Melinda Gates Foundation
+ The Mojaloop files are made available by the Bill & Melinda Gates Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+ Contributors
+ --------------
+ This is the official list (alphabetical ordering) of the Mojaloop project contributors for this file.
+ Names of the original copyright holders (individuals or organizations)
+ should be listed with a '*' in the first column. People who have
+ contributed from an organization can be listed under the organization
+ that actually holds the copyright for their contributions (see the
+ Gates Foundation organization for an example). Those individuals should have
+ their names indented and be marked with a '-'. Email address can be added
+ optionally within square brackets <email>.
+
+ * ThitsaWorks
+ - Si Thu Myo <sithu.myo@thitsaworks.com>
+
+ --------------
+ ******/
+
+"use strict";
+
+import { ILogger } from "@mojaloop/logging-bc-public-types-lib";
+import { IConfigurationClient } from "@mojaloop/platform-configuration-bc-public-types-lib";
+import { IMessageProducer } from "@mojaloop/platform-shared-lib-messaging-types-lib";
+import path from "path";
+import fs from "fs";
+import {
+    CertAlreadyExistError,
+    CertDirCreateError,
+    CertIDInvalidError,
+    CertNotFoundError,
+    CertReadingError,
+    CertStoringError,
+} from "./errors";
+
+export class CertificateAggregate {
+    private _logger: ILogger;
+    private _configClient: IConfigurationClient;
+    private _messageProducer: IMessageProducer;
+    private _cert_dir: string;
+
+    constructor(
+        configClient: IConfigurationClient,
+        messageProducer: IMessageProducer,
+        logger: ILogger,
+        cert_dir: string
+    ) {
+        this._configClient = configClient;
+        this._messageProducer = messageProducer;
+        this._logger = logger.createChild(this.constructor.name);
+        this._cert_dir = cert_dir;
+    }
+
+    async init(): Promise<void> {
+        try {
+            await fs.promises.mkdir(this._cert_dir, { recursive: true });
+            this._logger.info(`Using cert dir: ${this._cert_dir}`);
+            this._messageProducer.connect();
+        } catch (error: unknown) {
+            const errMsg = `this._cert_dir '${this._cert_dir}; create error: ${(error as Error).message}`;
+            this._logger.error(errMsg);
+            throw new CertDirCreateError(errMsg);
+        }
+    }
+
+    private _validateCertId(certId: string): boolean {
+        // sanitize the input
+        if (!certId) {
+            return false;
+        }
+        return /^[a-zA-Z0-9_]{3,30}$/.test(certId);
+    }
+
+    public async listCertificates(): Promise<string[]> {
+        try {
+            const files = await fs.promises.readdir(this._cert_dir);
+            const certs = files.map((file) => {
+                const certId = file.split("-pub.")[0];
+                return certId;
+            });
+            return certs;
+
+        } catch (error: unknown) {
+            const errMsg = `Error Listing Certificates: ${(error as Error).message}`;
+            this._logger.error(errMsg);
+            throw new CertReadingError(errMsg);
+        }
+    }
+
+    public async getCertificate(certId: string): Promise<string> {
+        if (!this._validateCertId(certId)) {
+            const errMsg = `Invalid certificate ID '${certId}': allow only alphanumerical, hyphen and underscore`;
+            this._logger.error(errMsg);
+            throw new CertIDInvalidError(errMsg);
+        }
+        try {
+            const filePath = path.join(this._cert_dir, `${certId}-pub.pem`);
+            const cert = await fs.promises.readFile(filePath, "utf8");
+            return cert;
+        } catch (error: unknown) {
+            const errMsg = `Error Certificate Not Found: '${certId}'`;
+            this._logger.error(errMsg);
+            throw new CertReadingError(errMsg);
+        }
+    }
+
+    public async storeCertificate(certId: string, cert: string): Promise<void> {
+        if (!this._validateCertId(certId)) {
+            const errMsg = `Invalid certificate ID: ${certId}`;
+            this._logger.error(errMsg);
+            throw new CertIDInvalidError(errMsg);
+        }
+
+        const filePath = path.join(this._cert_dir, `${certId}-pub.pem`);
+        if (fs.existsSync(filePath)) {
+            const errMsg = "Certificate already exists";
+            this._logger.error(errMsg);
+            throw new CertAlreadyExistError(errMsg);
+        }
+
+        try {
+            await fs.promises.writeFile(filePath, cert);
+        } catch (error: unknown) {
+            const errMsg = `Error Storing certificate: ${(error as Error).message}`;
+            this._logger.error(errMsg);
+            throw new CertStoringError("Error Storing Certificate");
+        }
+    }
+
+    public async updateCertificate(
+        certId: string,
+        cert: string
+    ): Promise<void> {
+        if (!this._validateCertId(certId)) {
+            const errMsg = `Invalid certificate ID: ${certId}`;
+            this._logger.error(errMsg);
+            throw new CertIDInvalidError(errMsg);
+        }
+
+        const filePath = path.join(this._cert_dir, `${certId}-pub.pem`);
+        if (!fs.existsSync(filePath)) {
+            const errMsg = "Certificate does not exist";
+            this._logger.error(errMsg);
+            throw new CertNotFoundError(errMsg);
+        }
+
+        try {
+            await fs.promises.writeFile(filePath, cert);
+        } catch (error: unknown) {
+            const errMsg = `Error Updating certificate: ${(error as Error).message}`;
+            this._logger.error(errMsg);
+            throw new CertStoringError("Error Updating Certificate");
+        }
+    }
+
+    public async deleteCertificate(certId: string): Promise<void> {
+        if (!this._validateCertId(certId)) {
+            const errMsg = `Invalid certificate ID: ${certId}`;
+            this._logger.error(errMsg);
+            throw new CertIDInvalidError(errMsg);
+        }
+
+        const filePath = path.join(this._cert_dir, `${certId}-pub.pem`);
+        if (!fs.existsSync(filePath)) {
+            const errMsg = "Certificate does not exist";
+            this._logger.error(errMsg);
+            throw new CertNotFoundError(errMsg);
+        }
+
+        try {
+            await fs.promises.unlink(filePath);
+        } catch (error: unknown) {
+            const errMsg = `Error Deleting certificate: ${(error as Error).message}`;
+            this._logger.error(errMsg);
+            throw new CertStoringError("Error Deleting Certificate");
+        }
+    }
+}
