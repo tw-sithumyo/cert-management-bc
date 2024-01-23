@@ -59,6 +59,9 @@ npm run test:unit
 npm run test:integration
 ```
 
+### Execute locally the pre-commit checks - these will be executed with every commit and in the default CI/CD pipeline
+Make sure these pass before committing any code
+
 ```bash
 npm run pre_commit_check
 ```
