@@ -22,6 +22,9 @@
  * Crosslake
  - Pedro Sousa Barreto <pedrob@crosslaketech.com>
 
+ * ThitsaWorks
+ - Si Thu Myo <sithu.myo@thitsaworks.com>
+
  --------------
  ******/
 
@@ -35,9 +38,9 @@ import { ConsoleLogger } from "@mojaloop/logging-bc-public-types-lib";
 /* ********** Constants Begin ********** */
 
 // General:
-const BOUNDED_CONTEXT_NAME: string = "mcm-bc";
-const SERVICE_NAME: string = "integration-tests";
-const SERVICE_VERSION: string = "0.0.1";
+// const BOUNDED_CONTEXT_NAME: string = "mcm-bc";
+// const SERVICE_NAME: string = "integration-tests";
+// const SERVICE_VERSION: string = "0.0.1";
 
 // Logging:
 // const LOGGING_LEVEL: LogLevel = LogLevel.INFO;

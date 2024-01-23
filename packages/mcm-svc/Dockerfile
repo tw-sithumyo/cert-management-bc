@@ -16,7 +16,7 @@ COPY package*.json ./
 
 # copy any local libraries this service needs
 #COPY packages/public-types-lib/package.json ./packages/public-types-lib/
-COPY packages/example-svc/package.json ./packages/example-svc/
+COPY packages/mcm-svc/package.json ./packages/mcm-svc/
 
 #RUN ls -la
 
@@ -38,7 +38,7 @@ COPY tsconfig.json ./
 #COPY packages/public-types-lib ./packages/public-types-lib
 
 # copy service code
-COPY packages/example-svc ./packages/example-svc
+COPY packages/mcm-svc ./packages/mcm-svc
 
 # build
 RUN npm run build
@@ -55,4 +55,4 @@ COPY --from=builder /app .
 # expose correct service oprt
 # EXPOSE 8111
 
-CMD [ "npm", "run", "start:example-svc" ]
+CMD [ "npm", "run", "start:mcm-svc" ]

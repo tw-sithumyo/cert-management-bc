@@ -33,7 +33,7 @@ import path from "path";
 import express, {Express} from "express";
 import process from "process";
 import {ExpressRoutes} from "./routes";
-import {ILogger, LogLevel} from "@mojaloop/logging-bc-public-types-lib";
+import {ConsoleLogger, ILogger, LogLevel} from "@mojaloop/logging-bc-public-types-lib";
 import {KafkaLogger} from "@mojaloop/logging-bc-client-lib";
 
 import {IConfigurationClient} from "@mojaloop/platform-configuration-bc-public-types-lib";
@@ -94,7 +94,14 @@ export class Service {
                 KAFKA_LOGS_TOPIC,
                 LOG_LEVEL
             );
-            await (logger as KafkaLogger).init();
+
+            try{
+                await (logger as KafkaLogger).init();
+            }catch(e){
+                globalLogger = logger = new ConsoleLogger();
+                logger.error("KafkaLogger init error: ", (e as Error).message);
+                process.exit(999);
+            }
         }
         globalLogger = this.logger = logger;
 
