@@ -29,7 +29,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageJSON = require("../../package.json");
-
+import path from "path";
 import express, {Express} from "express";
 import process from "process";
 import {ExpressRoutes} from "./routes";
@@ -55,6 +55,7 @@ const KAFKA_URL = process.env["KAFKA_URL"] || "localhost:9092";
 const KAFKA_LOGS_TOPIC = process.env["KAFKA_LOGS_TOPIC"] || "logs";
 
 const SERVICE_START_TIMEOUT_MS= (process.env["SERVICE_START_TIMEOUT_MS"] && parseInt(process.env["SERVICE_START_TIMEOUT_MS"])) || 60_000;
+const CERT_DIR = process.env["CERT_DIR"] || path.join(__dirname, "../certs");
 
 const kafkaProducerOptions = {
     kafkaBrokerList: KAFKA_URL
@@ -108,7 +109,8 @@ export class Service {
         this.certificateAggregate = new CertificateAggregate(
             this.configClient,
             this.messageProducer,
-            this.logger
+            this.logger,
+            CERT_DIR
         );
 
         await this.certificateAggregate.init();
