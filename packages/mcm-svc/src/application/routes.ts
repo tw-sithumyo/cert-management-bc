@@ -141,7 +141,7 @@ export class ExpressRoutes {
             res.status(200).send(cert);
         } catch (error: unknown) {
             this._logger.error(`Error getting certificate: ${(error as Error).message}`);
-            res.status(500).json({
+            res.status(404).json({
                 status: "error",
                 msg: (error as Error).message
             });

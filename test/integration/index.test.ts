@@ -19,9 +19,6 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
 
- * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
-
  * Crosslake
  - Pedro Sousa Barreto <pedrob@crosslaketech.com>
 
@@ -30,16 +27,117 @@
 
 "use strict";
 
-describe("application X integration tests", () => {
+import { ILogger, LogLevel } from "@mojaloop/logging-bc-public-types-lib";
+import { CertificatesHttpClient } from "../../packages/client-lib/src";
+import { AuthenticatedHttpRequester } from "@mojaloop/security-bc-client-lib";
+import { ConsoleLogger } from "@mojaloop/logging-bc-public-types-lib";
+
+/* ********** Constants Begin ********** */
+
+// General:
+const BOUNDED_CONTEXT_NAME: string = "mcm-bc";
+const SERVICE_NAME: string = "integration-tests";
+const SERVICE_VERSION: string = "0.0.1";
+
+// Logging:
+// const LOGGING_LEVEL: LogLevel = LogLevel.INFO;
+// const LOGGING_TOPIC: string = `${BOUNDED_CONTEXT_NAME}_${SERVICE_NAME}_logging`;
+
+// Web server:
+const BASE_URL_PARTICIPANTS_HTTP_SERVICE: string = `http://localhost:3200`;
+
+/* ********** Constants End ********** */
+
+let logger: ILogger;
+let certificatesHttpClient: CertificatesHttpClient;
+let authenticatedHttpRequester: AuthenticatedHttpRequester;
+
+const AUTH_N_SVC_BASEURL =
+    process.env["AUTH_N_SVC_BASEURL"] || "http://localhost:3201";
+const AUTH_N_SVC_TOKEN_URL = AUTH_N_SVC_BASEURL + "/token";
+
+const CLIENT_ID = "security-bc-ui";
+const USERNAME = "user";
+const PASSWORD = "superPass";
+
+describe("certificates management - integration tests", () => {
     beforeAll(async () => {
         // Setup
+        console.log(
+            `Integration tests for endpoint: ${BASE_URL_PARTICIPANTS_HTTP_SERVICE}`
+        );
+        logger = new ConsoleLogger();
+
+        authenticatedHttpRequester = new AuthenticatedHttpRequester(
+            logger,
+            AUTH_N_SVC_TOKEN_URL
+        );
+        authenticatedHttpRequester.setUserCredentials(
+            CLIENT_ID,
+            USERNAME,
+            PASSWORD
+        );
+
+        certificatesHttpClient = new CertificatesHttpClient(
+            logger,
+            BASE_URL_PARTICIPANTS_HTTP_SERVICE,
+            authenticatedHttpRequester
+        );
     });
 
     afterAll(async () => {
         // Cleanup
     });
 
-    test("test name", async () => {
-        // Test item goes here
+    test("list certificates", async () => {
+        const certs = await certificatesHttpClient.getListCertificates();
+        expect(certs).toBeInstanceOf(Array);
     });
+
+    test("create certificate using string", async () => {
+        const certId = "test_cert_1";
+        const cert_string = "---- BEGIN CERTIFICATE ----\n"+ "testing testing" +"----- END CERTIFICATE -----";
+        const status = await certificatesHttpClient.postCertificate(certId, cert_string);
+
+        expect(status).toBeDefined();
+        expect(status).toBe(200);
+
+        // cleanup
+        await certificatesHttpClient.deleteCertificate(certId);
+    })
+
+    test("get certificate", async () => {
+        const certId = "test_cert_2";
+        const cert_string = "---- BEGIN CERTIFICATE ----\n"+ "testing testing" +"----- END CERTIFICATE -----";
+        const status = await certificatesHttpClient.postCertificate(certId, cert_string);
+
+        expect(status).toBeDefined();
+        expect(status).toBe(200);
+
+        const cert = await certificatesHttpClient.getCertificate(certId);
+        expect(cert).toBeDefined();
+        expect(cert).toBe(cert_string);
+
+        // cleanup
+        await certificatesHttpClient.deleteCertificate(certId);
+    })
+
+    test("delete certificate", async () => {
+        const certId = "test_cert_3";
+        const cert_string = "---- BEGIN CERTIFICATE ----\n"+ "testing testing" +"----- END CERTIFICATE -----";
+        const status = await certificatesHttpClient.postCertificate(certId, cert_string);
+
+        expect(status).toBeDefined();
+        expect(status).toBe(200);
+
+        const delete_status = await certificatesHttpClient.deleteCertificate(certId);
+        expect(delete_status).toBeDefined();
+        expect(delete_status).toBe(200);
+    })
+
+    test("get certificate - not found", async () => {
+        const certId = "test_cert_999";
+        const cert = await certificatesHttpClient.getCertificate(certId);
+        expect(cert).toBeNull();
+    })
 });

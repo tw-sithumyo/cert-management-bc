@@ -95,7 +95,7 @@ export class CertificatesHttpClient {
         }
     }
 
-    public async postCertificate(certId: string, cert: string): Promise<void> {
+    public async postCertificate(certId: string, cert: string): Promise<number> {
         try {
             const url = new URL("/certs", this._baseUrlHttpService).toString();
             const request = new Request(url, {
@@ -108,14 +108,7 @@ export class CertificatesHttpClient {
 
             const resp = await this._authRequester.fetch(request);
 
-            const respBody = await resp.text();
-
-            if (resp.status === 200) {
-                return;
-            }
-            console.log(resp.status);
-
-            throw new UnableToCreateCertificateError(`Response status: ${resp.status}, Body: ${respBody}`);
+            return resp.status;
         } catch (e: unknown) {
             if (e instanceof Error) throw e;
             throw new UnableToCreateCertificateError();
@@ -125,7 +118,7 @@ export class CertificatesHttpClient {
     public async putCertificate(
         certId: string,
         cert: string
-    ): Promise<void> {
+    ): Promise<number> {
         try {
             const url = new URL(
                 `/certs/${certId}`,
@@ -140,19 +133,15 @@ export class CertificatesHttpClient {
             });
 
             const resp = await this._authRequester.fetch(request);
+            return resp.status;
 
-            if (resp.status === 200) {
-                return;
-            }
-
-            throw new UnableToUpdateCertificateError();
         } catch (e: unknown) {
             if (e instanceof Error) throw e;
             throw new UnableToUpdateCertificateError();
         }
     }
 
-    public async deleteCertificate(certId: string): Promise<void> {
+    public async deleteCertificate(certId: string): Promise<number> {
         try {
             const url = new URL(
                 `/certs/${certId}`,
@@ -163,12 +152,7 @@ export class CertificatesHttpClient {
             });
 
             const resp = await this._authRequester.fetch(request);
-
-            if (resp.status === 200) {
-                return;
-            }
-
-            throw new UnableToUpdateCertificateError();
+            return resp.status;
         } catch (e: unknown) {
             if (e instanceof Error) throw e;
             throw new UnableToUpdateCertificateError();
