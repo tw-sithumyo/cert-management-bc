@@ -1,0 +1,178 @@
+
+openapi: 3.0.0
+info:
+  title: Certificate Management API
+  version: "1.0"
+  description: API for managing certificates in the Mojaloop ecosystem.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: http://localhost:3200/
+    description: Local server
+
+paths:
+  /certs:
+    get:
+      tags:
+        - GET
+      summary: List all certificates
+      responses:
+        '200':
+          description: A list of certificates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certificate'
+    post:
+      tags:
+        - POST
+      summary: Store a new certificate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCertificate'
+      responses:
+        '200':
+          description: Certificate stored successfully
+
+  /certs/file:
+    post:
+      tags:
+        - POST
+      summary: Store a new certificate file
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                certId:
+                  type: string
+                  description: The ID of the certificate
+                cert:
+                  type: string
+                  format: binary
+                  description: The certificate file
+      responses:
+        '200':
+          description: Certificate file stored successfully
+        '400':
+          description: Invalid input
+
+  /certs/file/{certId}:
+    put:
+      tags:
+        - PUT
+      summary: Update an existing certificate file
+      parameters:
+        - name: certId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cert:
+                  type: string
+                  format: binary
+                  description: The updated certificate file
+      responses:
+        '200':
+          description: Certificate file updated successfully
+        '400':
+          description: Invalid input
+        '404':
+          description: Certificate not found
+
+  /certs/{certId}:
+    get:
+      tags:
+        - GET
+      summary: Get a specific certificate
+      parameters:
+        - name: certId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Details of the certificate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certificate'
+        '404':
+          description: Certificate not found
+    put:
+      tags:
+        - PUT
+      summary: Update an existing certificate
+      parameters:
+        - name: certId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCertificate'
+      responses:
+        '200':
+          description: Certificate updated successfully
+        '404':
+          description: Certificate not found
+    delete:
+      tags:
+        - DELETE
+      summary: Delete a certificate
+      parameters:
+        - name: certId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Certificate deleted successfully
+        '500':
+          description: Error deleting certificate
+
+components:
+  schemas:
+    Certificate:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+    NewCertificate:
+      type: object
+      properties:
+        certId:
+          type: string
+          example: 'dfsp1'
+        cert:
+          type: string
+          example: |
+            -----BEGIN CERTIFICATE-----
+            MIICyDCCAbCgAwIBAgIUMjAwMDEwMDAwMDAxMDAwMDAwMDMwDQYJKoZIhvcNAQEL
+            BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTIwMDUxNzE5MjY0NVoXDTIxMDUx
+            NzE5MjY0NVowFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgk
+            -----END CERTIFICATE-----
