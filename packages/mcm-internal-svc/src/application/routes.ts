@@ -184,11 +184,13 @@ export class ExpressRoutes {
 
         try {
             if (!req.file) {
+                this._logger.debug("No file uploaded");
                 res.status(400).json({ error: "No file uploaded" });
                 return;
             }
 
             if(this._validateCertFile(certId, req.file) == false) {
+                this._logger.debug(`Invalid file uploaded. use '${certId}-pub.pem' as filename. ` );
                 res.status(400).json({ error: `Invalid file uploaded. use '${certId}-pub.pem' as filename. ` });
                 return;
             }
@@ -241,6 +243,7 @@ export class ExpressRoutes {
 
         try {
             if (!req.file) {
+                this._logger.debug("No file uploaded");
                 res.status(400).json({ error: "No file uploaded" });
                 return;
             }

@@ -6,6 +6,24 @@
 
 ### Certificate Management Service - mcm-svc
 
+#### Workspaces
+
+Check the README.md in each package for configurable environment variables.
+
+- [mcm-internal-svc](./packages/mcm-internal-svc) - Certificate Management API Service for Internal Hub
+  - [Internal Management OpenAPI docs](./docs)
+- [mcm-external-svc](./packages/mcm-external-svc) - Certificate Providing API Service for External DFSPs Participants
+  - [External DFSP OpenAPI docs](./docs)
+- [client-external-lib](./packages/client-external-lib) - Client Helper Library for External DFSPs through interop-api-svc
+- [client-internal-lib](./packages/client-internal-lib) - Client Helper Library for Internal Hub Services
+- [domain-lib](./packages/domain-lib) - Domain Library where all the business logic is implemented
+
+#### External Service Dependencies
+<!-- - MongoDB -->
+- Kafka (for logger, and event publishing)
+
+See [here](https://github.com/mojaloop/platform-shared-tools/tree/main/packages/deployment/docker-compose-infra)
+for more details about how to deploy.
 
 ## Usage
 
