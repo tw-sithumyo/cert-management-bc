@@ -1,4 +1,3 @@
-
 /*****
  License
  --------------
@@ -41,6 +40,15 @@ import {
     CertReadingError,
     CertStoringError,
 } from "./errors";
+
+import {
+    CertChangedEvt,
+    CertChangedEvtPayload,
+    CertCreatedEvt,
+    CertCreatedEvtPayload,
+    CertDeletedEvt,
+    CertDeletedEvtPayload,
+} from "@mojaloop/platform-shared-lib-public-messages-lib";
 
 export class CertificateAggregate {
     private _logger: ILogger;
@@ -129,6 +137,13 @@ export class CertificateAggregate {
 
         try {
             await fs.promises.writeFile(filePath, cert);
+
+            const certCreatedPayload: CertCreatedEvtPayload = {
+                participantId: certId,
+            };
+            const event = new CertCreatedEvt(certCreatedPayload);
+            await this._messageProducer.send(event);
+
         } catch (error: unknown) {
             const errMsg = `Error Storing certificate: ${(error as Error).message}`;
             this._logger.error(errMsg);
@@ -155,6 +170,13 @@ export class CertificateAggregate {
 
         try {
             await fs.promises.writeFile(filePath, cert);
+
+            const certChangedPayload: CertChangedEvtPayload = {
+                participantId: certId,
+            };
+            const event = new CertChangedEvt(certChangedPayload);
+            await this._messageProducer.send(event);
+
         } catch (error: unknown) {
             const errMsg = `Error Updating certificate: ${(error as Error).message}`;
             this._logger.error(errMsg);
@@ -178,6 +200,13 @@ export class CertificateAggregate {
 
         try {
             await fs.promises.unlink(filePath);
+
+            const certDeletedPayload: CertDeletedEvtPayload = {
+                participantId: certId,
+            };
+            const event = new CertDeletedEvt(certDeletedPayload);
+            await this._messageProducer.send(event);
+
         } catch (error: unknown) {
             const errMsg = `Error Deleting certificate: ${(error as Error).message}`;
             this._logger.error(errMsg);
