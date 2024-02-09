@@ -31,23 +31,30 @@
 
 "use strict";
 
-import {ICertificate} from "../types";
+import {ICertificate, ICertificateRequest, IPublicKeyInfo} from "../types";
 
 export interface ICertRepo {
     init(): Promise<void>;
     destroy(): Promise<void>;
 
+    getAllCertificates(): Promise<ICertificate[]>;
+    getAllPublicKeys(): Promise<IPublicKeyInfo[]>;
+
     getCertificateByParticipantId(participantId: string): Promise<ICertificate | null>;
-    getCertificateByObjectId(object_id: string): Promise<ICertificate | null>;
-    getCertificateRequests(): Promise<ICertificate[]>;
-    getCertificateRequestsByParticipantIds(participantIds: string[]): Promise<ICertificate[]>;
+    getCertificateByObjectId(objectId: string): Promise<ICertificate | null>;
+    getCertificateRequests(): Promise<ICertificateRequest[]>;
+    getCertificateRequestsByParticipantId(participantId: string): Promise<ICertificateRequest | null>;
+    getCertificateRequestsByParticipantIds(participantIds: string[]): Promise<ICertificateRequest[]>;
 
     addCertificateRequest(certificate: ICertificate): Promise<void>;
     updateCertificate(certificate: ICertificate): Promise<void>;
     deleteCertificate(participantId: string): Promise<void>;
 
-    approveCertificate(certificateId: string, participantId: string, approvedBy: string): Promise<void>;
-    bulkApproveCertificates(participantIds: string[], approvedBy: string): Promise<void>;
+    approveCertificate(certificateId: string, approvedBy: string): Promise<void>;
+    bulkApproveCertificates(certificateIds: string[], approvedBy: string): Promise<void>;
 
-    deleteCertificateRequest(participantId: string): Promise<void>;
+    deleteCertificateRequest(certificateId: string, participantId: string): Promise<void>;
+    bulkDeleteCertificateRequests(certificateIds: string[]): Promise<void>;
+
+    isAllCertificatesUniqueParticipants(certificateIds: string[]): Promise<boolean>;
 }

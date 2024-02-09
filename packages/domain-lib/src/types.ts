@@ -32,19 +32,44 @@
 "use strict";
 
 export type ICertType = "PUBLIC" | "PRIVATE";
+
+export interface ICertificateInfo {
+    subject: string;
+    issuer: string;
+    validFrom: string;
+    validTo: string;
+    serialNumber: string;
+    publicKeyAlgorithm: string;
+    signatureAlgorithm: string;
+    extensions: Record<string, any>;
+}
+
 export interface ICertificate {
     _id: string | null;
     participantId: string;
     type: ICertType;
     cert: string;
+    publicKey: string;
+    certInfo?: ICertificateInfo;
     description: string | null;
 
     createdBy: string;
-    createdDate: number;
+    createdDate: Date;
 
     approved: boolean;
     approvedBy: string | null;
-    approvedDate: number | null;
+    approvedDate: Date | null;
 
     lastUpdated: number;
+}
+
+export interface ICertificateRequest {
+    participantId: string;
+    participantCertificateUploadRequests: ICertificate[];
+    createdDate: Date;
+}
+
+export interface IPublicKeyInfo {
+    participantId: string;
+    publicKey: string;
 }
