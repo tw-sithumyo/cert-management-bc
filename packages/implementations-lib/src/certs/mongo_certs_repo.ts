@@ -572,7 +572,7 @@ export class MongoCertsRepo implements ICertRepo {
 
         await this.approvalsCollection.updateOne(
             { participantId: participantId },
-            { $pull: { participantCertificateUploadRequests: { _id: new ObjectId(certificateId) } } }
+            { $pull: { participantCertificateUploadRequests: { _id: new ObjectId(certificateId) } } } as any
         ).catch((e: unknown) => {
             this._logger.error(
                 `Unable to delete certificate request: ${(e as Error).message}`
@@ -691,7 +691,7 @@ export class MongoCertsRepo implements ICertRepo {
         // Remove from approvalsCollection
         await this.approvalsCollection.updateOne(
             { participantId: participantId },
-            { $pull: { participantCertificateUploadRequests: { _id: certificate._id } } }
+            { $pull: { participantCertificateUploadRequests: { _id: certificate._id } } } as any
         );
     }
 
