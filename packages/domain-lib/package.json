@@ -1,6 +1,6 @@
 {
     "name": "@mojaloop/cert-management-bc-domain-lib",
-    "version": "0.0.1",
+    "version": "0.0.4",
     "description": "To manage the certs of DFSPs for fspiop-signature and connection management",
     "license": "Apache-2.0",
     "homepage": "https://github.com/mojaloop/cert-management-bc",
@@ -31,10 +31,11 @@
         "test:unit": "jest --passWithNoTests --testMatch **/test/unit/**/*.test.ts"
     },
     "dependencies": {
-        "@mojaloop/logging-bc-client-lib": "^0.5.2",
-        "@mojaloop/logging-bc-public-types-lib": "~0.5.2",
-        "@mojaloop/platform-configuration-bc-client-lib": "^0.5.2",
-        "@mojaloop/platform-configuration-bc-public-types-lib": "^0.5.2"
+        "@mojaloop/logging-bc-client-lib": "^0.5.6",
+        "@mojaloop/logging-bc-public-types-lib": "~0.5.4",
+        "@mojaloop/platform-configuration-bc-client-lib": "^0.5.3",
+        "@mojaloop/platform-configuration-bc-public-types-lib": "^0.5.2",
+        "mongodb": "^6.3.0"
     },
     "engines": {
         "node": ">=20.10.0"
