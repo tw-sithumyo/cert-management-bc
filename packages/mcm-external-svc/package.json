@@ -1,5 +1,5 @@
 {
-    "name": "@mojaloop/cert-management-bc-mcm-external-svc",
+    "name": "@twstm/cert-management-bc-mcm-external-svc",
     "version": "0.0.1",
     "description": "External MCM service for Fetching DFSP Certificates",
     "license": "Apache-2.0",

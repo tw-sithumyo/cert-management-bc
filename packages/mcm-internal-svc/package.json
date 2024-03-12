@@ -1,5 +1,5 @@
 {
-    "name": "@mojaloop/cert-management-bc-mcm-internal-svc",
+    "name": "@twstm/cert-management-bc-mcm-internal-svc",
     "version": "0.0.1",
     "description": "Internal MCM service for Hub Operator/Admins",
     "license": "Apache-2.0",
